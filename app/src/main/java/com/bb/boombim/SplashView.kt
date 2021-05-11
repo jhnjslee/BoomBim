@@ -28,7 +28,7 @@ class SplashView : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.splash_view)
         Log.i("AppVersion","1.1.81")
-        prog = findViewById(R.id.progressBar)
+//        prog = findViewById(R.id.progressBar)
         initProg()
         startTimerThread()
         Handler().postDelayed({
@@ -66,7 +66,7 @@ class SplashView : AppCompatActivity() {
             // timerTask는 timer가 일할 내용을 기록하는 객체
             override fun run() {
                 // 이곳에 timer가 동작할 task를 작성
-                increaseBar() // timer가 동작할 내용을 갖는 함수 호출
+//                increaseBar() // timer가 동작할 내용을 갖는 함수 호출
                 isTaskCompleted = true
             }
         }
@@ -75,18 +75,18 @@ class SplashView : AppCompatActivity() {
     } // startthread
 
 
-    fun increaseBar() {
-        runOnUiThread { // run을 해준다. 그러나 일반 thread처럼 .start()를 해줄 필요는 없다
-            currprog = prog?.getProgress()!!
-            val maxprog: Int = prog?.getMax()!!
-            if (currprog in 0 until maxprog) {
-                currprog += 1 // 프로그래스바 1씩 증가
-            } else if (currprog == maxprog) {
-                stopTimer()
-            }
-            prog?.progress = currprog
-        }
-    } // progress
+//    fun increaseBar() {
+//        runOnUiThread { // run을 해준다. 그러나 일반 thread처럼 .start()를 해줄 필요는 없다
+//            currprog = prog?.getProgress()!!
+//            val maxprog: Int = prog?.getMax()!!
+//            if (currprog in 0 until maxprog) {
+//                currprog += 1 // 프로그래스바 1씩 증가
+//            } else if (currprog == maxprog) {
+//                stopTimer()
+//            }
+//            prog?.progress = currprog
+//        }
+//    } // progress
 
     fun stopTimer() {
         if (timerTask != null) {
