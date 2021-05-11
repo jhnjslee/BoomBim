@@ -2,16 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:title="Menu One"
         android:id="@+id/menu_one"
-        app:showAsAction="always"
-        android:icon="@drawable/ic_attachment_black_24dp"/>
+        android:icon="@drawable/ic_search_black_24dp"
+        android:title="Menu One"
+        app:showAsAction="always" />
     <item
-        android:title="Menu Two"
         android:id="@+id/menu_two"
-        app:showAsAction="always"
-        app:actionLayout="@layout/profile_menu_layout"/>
+        android:icon="@drawable/ic_menu_button_of_three_horizontal_lines"
+        android:title="Menu Two" />
     <item
         android:title="Menu Three"
-        android:id="@+id/menu_three"/>
+        android:id="@+id/menu_three"
+        app:showAsAction="always"
+        app:actionLayout="@layout/profile_menu_layout"/>
 </menu>

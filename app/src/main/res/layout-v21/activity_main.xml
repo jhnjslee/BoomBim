@@ -34,7 +34,32 @@
                     android:elevation="1dp"
                     android:minHeight="?attr/actionBarSize"
                     android:theme="?attr/actionBarTheme"
-                    tools:targetApi="lollipop" />
+                    tools:targetApi="lollipop" >
+
+                        <EditText
+                            android:id="@+id/searchTitle"
+                            android:layout_width="250dp"
+                            android:layout_height="40dp"
+                            android:background="@android:color/transparent"
+                            android:hint="검색하고자 하는 위치"
+                            android:paddingRight="16dp"
+                            android:textColor="#000000"
+                            android:textColorHint="#808080" />
+                    </androidx.appcompat.widget.Toolbar>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                        <EditText
+                            android:id="@+id/editTextTextPersonName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ems="10"
+                            android:inputType="textPersonName"
+                            android:text="Name" />
+                </LinearLayout>
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/floatingActionButton"
