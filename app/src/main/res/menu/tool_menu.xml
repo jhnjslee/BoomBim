@@ -9,9 +9,10 @@
     <item
         android:id="@+id/menu_two"
         android:icon="@drawable/ic_menu_button_of_three_horizontal_lines"
-        android:title="Menu Two" />
+        android:title="로그인" />
     <item
         android:title="Menu Three"
+        android:iconTint="@color/black"
         android:id="@+id/menu_three"
         app:showAsAction="always"
         app:actionLayout="@layout/profile_menu_layout"/>

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "833738052786",
+    "project_id": "boombim",
+    "storage_bucket": "boombim.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:833738052786:android:c9702b1a1201e65570a5ab",
+        "android_client_info": {
+          "package_name": "com.bb.boombim"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "833738052786-bthjhfgerouhf68u1k244j6kg8rs0vhh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDFl6Ub9qSihsqWN-fyg9Y8JaHd38_2Tg4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "833738052786-bthjhfgerouhf68u1k244j6kg8rs0vhh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
