@@ -11,7 +11,7 @@
             android:id="@+id/map_view"
             android:layout_width="411dp"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/tabLayout"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -21,7 +21,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="46dp"
                     android:layout_alignParentStart="true"
-                    android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
@@ -34,7 +33,7 @@
                     android:elevation="1dp"
                     android:minHeight="?attr/actionBarSize"
                     android:theme="?attr/actionBarTheme"
-                    tools:targetApi="lollipop" >
+                    tools:targetApi="lollipop">
 
                         <EditText
                             android:id="@+id/searchTitle"
@@ -45,7 +44,7 @@
                             android:paddingRight="16dp"
                             android:textColor="#000000"
                             android:textColorHint="#808080" />
-                    </androidx.appcompat.widget.Toolbar>
+                </androidx.appcompat.widget.Toolbar>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -59,10 +58,12 @@
                             android:ems="10"
                             android:inputType="textPersonName"
                             android:text="Name" />
+
                 </LinearLayout>
 
+
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/floatingActionButton"
+                    android:id="@+id/floatingCurrentLocation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
@@ -76,43 +77,60 @@
                     android:layout_marginTop="606dp"
                     android:layout_marginEnd="343dp"
                     android:layout_marginRight="343dp"
-                    android:layout_marginBottom="24dp"
+                    android:layout_marginBottom="74dp"
                     android:clickable="true"
                     android:contentDescription="@string/todo"
                     android:elevation="1dp"
                     android:focusable="true"
-                    android:tint="#B758F6E3"
+                    android:tint="#0037FF"
                     app:backgroundTint="#00FFFFFF"
+                    app:fabSize="normal"
+                    app:rippleColor="#00FFFFFF"
                     app:srcCompat="@android:drawable/ic_menu_mylocation" />
+
+                <TextView
+                    android:id="@+id/currentMode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/mainToolBar"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="170dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="170dp"
+                    android:background="@drawable/border_layout"
+                    android:backgroundTint="#FFFFFF"
+                    android:elevation="1dp"
+                    android:text="TextView"
+                    android:textAlignment="center"
+                    android:textColor="@color/black" />
 
         </RelativeLayout>
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabLayout"
+
+        <com.bb.boombim.CurvedBottomNavigationView
+            android:id="@+id/curvedBottomNavigationView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/border_layout"
+            android:layout_height="52dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <com.imangazaliev.circlemenu.CircleMenu
+            android:id="@+id/floatingBb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            app:backgroundTint="#03A9F4"
+            app:layout_constraintBottom_toTopOf="@+id/curvedBottomNavigationView"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:tabIndicatorColor="#00FFFFFF">
-
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:icon="@android:drawable/star_big_on" />
-
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:icon="@drawable/ic_location" />
-
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:icon="@android:drawable/ic_dialog_dialer"
-                    android:tint="#FFFFFF"
-                    app:tint="#FFFFFF" />
-        </com.google.android.material.tabs.TabLayout>
-
+            app:layout_constraintTop_toTopOf="@+id/curvedBottomNavigationView"
+            app:maxAngle="180"
+            app:iconsColor="@color/black"
+            app:startAngle="-150"
+            app:showSelectAnimation="false"
+            app:buttonColors="@array/circle_menu_color"
+            app:buttonIcons="@array/circle_menu_icon"
+            />
 </androidx.constraintlayout.widget.ConstraintLayout>

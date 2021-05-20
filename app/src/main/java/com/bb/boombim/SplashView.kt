@@ -12,7 +12,7 @@ import java.util.*
 
 
 class SplashView : AppCompatActivity() {
-    private val SPLASH_TIME_OUT:Long = 4000 // sec
+    private val SPLASH_TIME_OUT:Long = 2000 // sec
     var currprog = 0 //멤버변수
     private var prog : ProgressBar? = null
     private var timerTask :TimerTask? = null
@@ -27,7 +27,6 @@ class SplashView : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.splash_view)
-        Log.i("AppVersion","1.1.81")
 //        prog = findViewById(R.id.progressBar)
         initProg()
         startTimerThread()

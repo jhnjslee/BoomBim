@@ -22,7 +22,6 @@
                     android:layout_width="368dp"
                     android:layout_height="54dp"
                     android:layout_alignParentStart="true"
-                    android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
@@ -40,57 +39,47 @@
                     tools:targetApi="lollipop" />
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/floatingActionButton"
+                    android:id="@+id/floatingCurrentLocation"
                     android:layout_width="50dp"
                     android:layout_height="46dp"
                     android:layout_alignParentStart="true"
-                    android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
                     android:layout_alignParentBottom="true"
-                    android:layout_marginStart="14dp"
-                    android:layout_marginLeft="14dp"
-                    android:layout_marginTop="615dp"
-                    android:layout_marginEnd="342dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="613dp"
+                    android:layout_marginEnd="353dp"
                     android:layout_marginRight="342dp"
-                    android:layout_marginBottom="25dp"
+                    android:layout_marginBottom="26dp"
                     android:clickable="true"
-                    android:tint="#B758F6E3"
-                    android:elevation="1dp"
-                    app:backgroundTint="#00FFFFFF"
-                    app:srcCompat="@android:drawable/ic_menu_mylocation"
                     android:contentDescription="@string/todo"
-                    android:focusable="true" />
+                    android:elevation="1dp"
+                    android:focusable="true"
+                    android:tint="#B758F6E3"
+                    app:backgroundTint="#00FFFFFF"
+                    app:srcCompat="@android:drawable/ic_menu_mylocation" />
+
+
         </RelativeLayout>
 
-        <com.google.android.material.tabs.TabLayout
+        <com.bb.boombim.CurvedBottomNavigationView
+            android:id="@+id/curvedBottomNavigationView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="52dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floatingBb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            app:layout_constraintBottom_toTopOf="@+id/curvedBottomNavigationView"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/map_view"
-            app:layout_constraintVertical_bias="1.0"
-            app:tabIndicatorColor="#7EFFFFFF">
-
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:icon="@android:drawable/star_big_on" />
-
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:icon="@drawable/ic_location" />
-
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:icon="@android:drawable/ic_dialog_dialer"
-                    android:tint="#FFFFFF"
-                    app:tint="#FFFFFF" />
-        </com.google.android.material.tabs.TabLayout>
+            app:layout_constraintTop_toTopOf="@+id/curvedBottomNavigationView"
+            app:srcCompat="@drawable/ic_location"
+            android:contentDescription="TODO" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -25,9 +25,13 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.MenuItemCompat
 import com.bb.boombim.ui.login.LoginActivity
 import com.bumptech.glide.Glide
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.imangazaliev.circlemenu.CircleMenu
 import de.hdodenhof.circleimageview.CircleImageView
 import es.dmoral.toasty.Toasty
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.circlie_menu.*
 import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapView
 
@@ -38,6 +42,8 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
     private val PERMISSIONS_REQUEST_CODE = 100
     var REQUIRED_PERMISSIONS = arrayOf<String>(Manifest.permission.ACCESS_FINE_LOCATION)
     lateinit var mapView : MapView
+    lateinit var loadingDialog: LoadingDialog
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -50,11 +56,40 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
         }else {
             checkRunTimePermission()
         }
+        curvedBottomNavigationView.inflateMenu(R.menu.bottom_menu)
+        curvedBottomNavigationView.setOnNavigationItemSelectedListener(BottomNavigationView.OnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.page1 -> return@OnNavigationItemSelectedListener true
+                R.id.page2 -> {
+                    val intent = Intent(this, SettingActivity::class.java)
+                    startActivity(intent)
 
-
+                    return@OnNavigationItemSelectedListener true
+                }
+            }
+            false
+        })
+        val circleMenu = findViewById<CircleMenu>(R.id.floatingBb)
+        circleMenu.setOnItemClickListener { menuButton ->
+            when(menuButton){
+                0 -> {
+                    currentMode.text = " 즐겨찾기 "
+                }
+                1 -> {
+                    currentMode.text = " 현재위치 "
+                }
+                2 -> {
+                    currentMode.text = " 좋아요 "
+                }
+            }
+            Log.d("circleMenu", menuButton.toString())
+        }
     }
 
-
+    override fun onStart() {
+        super.onStart()
+        curvedBottomNavigationView.menu.getItem(0).setChecked(true)
+    }
 
     private fun init(applicationContext: Context) {
         //mapView
@@ -68,11 +103,13 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
         locationManager = this.getSystemService(LOCATION_SERVICE) as LocationManager
         mapView.setCurrentLocationEventListener(this)
 
-
-        val currentLocationBtn : FloatingActionButton = findViewById(R.id.floatingActionButton)
+        loadingDialog = LoadingDialog(this@MainActivity)
+        currentMode.text = " 기본 "
+        val currentLocationBtn : FloatingActionButton = findViewById(R.id.floatingCurrentLocation)
         currentLocationBtn.setOnClickListener {
             try {
-
+                loadingDialog.show()
+//                LoadingDialog(this).show()
                 // GPS 제공자의 정보가 바뀌면 콜백하도록 리스너 등록하기~!!!
                 locationManager.requestLocationUpdates(
                     LocationManager.GPS_PROVIDER,  // 등록할 위치제공자
@@ -93,6 +130,13 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
                 //lm.removeUpdates(mLocationListener);  //  미수신할때는 반드시 자원해체를 해주어야 한다.
             } catch (ex: SecurityException) {
             }
+
+        }
+
+        floatingBb.setOnClickListener {
+
+            loadingDialog.show()
+//            LoadingDialog(this).dismiss()
         }
     }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -125,12 +169,6 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
                 //로그인
                 val intent = Intent(this, LoginActivity::class.java)
                 startActivity(intent)
-
-//                Toast.makeText(
-//                this@MainActivity,
-//                "Menu Two Clicked",
-//                Toast.LENGTH_SHORT
-//            ).show()
             }
             R.id.menu_three -> Toast.makeText(
                 this@MainActivity,
@@ -145,7 +183,12 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
     private val mLocationListener : LocationListener by lazy{
         object : LocationListener {
             override fun onLocationChanged(location: Location) {
-                Toast.makeText(this@MainActivity, "locationChange", Toast.LENGTH_SHORT).show()
+
+                loadingDialog.dismiss()
+                if(loadingDialog.isShowing){
+                    loadingDialog.dismiss()
+                }
+                Toast.makeText(this@MainActivity, "피융", Toast.LENGTH_SHORT).show()
             }
 
         }
@@ -185,7 +228,8 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
 
 
             // 3.  위치 값을 가져올 수 있음
-            mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOnWithHeading
+//            mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOnWithHeading
+            mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading
         } else {  //2. 퍼미션 요청을 허용한 적이 없다면 퍼미션 요청이 필요합니다. 2가지 경우(3-1, 4-1)가 있습니다.
 
             // 3-1. 사용자가 퍼미션 거부를 한 적이 있는 경우에는
@@ -237,6 +281,9 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+
+        Log.d("currentResult", "0")
+        Log.d("requestCode", requestCode.toString())
         when (requestCode) {
             GPS_ENABLE_REQUEST_CODE ->
                 //사용자가 GPS 활성 시켰는지 검사

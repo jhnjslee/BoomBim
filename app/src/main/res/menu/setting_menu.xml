@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_search"
+        android:icon="@drawable/ic_download"
+        android:iconTint="@color/black"
+        android:title="search"
+
+        android:visible="false"
+        app:showAsAction="never" />
+    <group>
+        <item
+            android:id="@+id/menu_account"
+            android:title="account"
+            android:icon="@drawable/ic_heart"
+            />
+        <item
+            android:id="@+id/menu_logout"
+            android:title="logout"
+            android:icon="@drawable/ic_star"
+            />
+    </group>
+</menu>

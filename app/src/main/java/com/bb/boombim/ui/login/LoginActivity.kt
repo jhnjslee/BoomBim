@@ -1,6 +1,7 @@
 package com.bb.boombim.ui.login
 
 import android.app.Activity
+import android.content.Intent
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
@@ -16,6 +17,7 @@ import android.widget.ProgressBar
 import android.widget.Toast
 
 import com.bb.boombim.R
+import com.bb.boombim.RegisterActivity
 
 class LoginActivity : AppCompatActivity() {
 
@@ -30,6 +32,8 @@ class LoginActivity : AppCompatActivity() {
         val password = findViewById<EditText>(R.id.password)
         val login = findViewById<Button>(R.id.login)
         val loading = findViewById<ProgressBar>(R.id.loading)
+        val registerBtn = findViewById<Button>(R.id.registerButton)
+
 
         loginViewModel = ViewModelProvider(this, LoginViewModelFactory())
                 .get(LoginViewModel::class.java)
@@ -93,6 +97,11 @@ class LoginActivity : AppCompatActivity() {
             login.setOnClickListener {
                 loading.visibility = View.VISIBLE
                 loginViewModel.login(username.text.toString(), password.text.toString())
+            }
+            registerBtn.setOnClickListener {
+                loading.visibility = View.VISIBLE
+                loginViewModel.registerBtnClicked()
+
             }
         }
     }

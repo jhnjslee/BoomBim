@@ -1,5 +1,6 @@
 plugins {
     id 'com.android.application'
+    id 'kotlin-android-extensions'
     id 'kotlin-android'
     id 'com.google.gms.google-services'
 }
@@ -63,5 +64,12 @@ dependencies {
 
     // toasty
     implementation 'com.github.GrenderG:Toasty:1.5.0'
+    implementation 'com.google.firebase:firebase-firestore-ktx:23.0.0'
+
+    //bottom bar button
+    implementation 'com.github.imangazalievm:circlemenu:3.0.0'
+
+    //spinner
+    implementation 'com.github.ybq:Android-SpinKit:1.4.0'
 
 }

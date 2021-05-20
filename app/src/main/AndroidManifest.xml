@@ -17,11 +17,14 @@
         android:theme="@style/Theme.AppCompat.NoActionBar"
         android:usesCleartextTraffic="true"
         tools:targetApi="n">
-        <activity android:name=".registerActivity"></activity>
+        <activity android:name=".SettingActivity">
+
+        </activity>
+        <activity android:name=".RegisterActivity" />
         <activity
             android:name=".ui.login.LoginActivity"
             android:label="@string/title_activity_login"
-            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar"></activity>
+            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
         <activity
             android:name=".SplashView"
             android:screenOrientation="portrait"

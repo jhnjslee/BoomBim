@@ -1,5 +1,6 @@
 package com.bb.boombim.ui.login
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,6 +9,7 @@ import com.bb.boombim.data.LoginRepository
 import com.bb.boombim.data.Result
 
 import com.bb.boombim.R
+import com.bb.boombim.RegisterActivity
 
 class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel() {
 
@@ -17,6 +19,7 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
     private val _loginResult = MutableLiveData<LoginResult>()
     val loginResult: LiveData<LoginResult> = _loginResult
 
+    //로그인 버튼 눌렀을때
     fun login(username: String, password: String) {
         // can be launched in a separate asynchronous job
         val result = loginRepository.login(username, password)
@@ -36,6 +39,11 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
         } else {
             _loginForm.value = LoginFormState(isDataValid = true)
         }
+    }
+
+    fun registerBtnClicked(){
+        Log.d("regeisterBtn","register")
+
     }
 
     // A placeholder username validation check

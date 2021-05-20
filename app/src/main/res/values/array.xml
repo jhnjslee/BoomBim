@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="circle_menu_color">
+        <item>@color/white</item>
+        <item>@color/white</item>
+        <item>@color/white</item>
+    </array>
+    <array name="circle_menu_icon">
+        <item>@drawable/ic_star</item>
+        <item>@drawable/ic_download</item>
+        <item>@drawable/ic_heart</item>
+    </array>
+
+</resources>
