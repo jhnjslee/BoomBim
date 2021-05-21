@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/layoutLine">
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1" >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/settingImage"
+                android:layout_width="38dp"
+                android:layout_height="46dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:paddingLeft="10dip"
+                app:srcCompat="@drawable/ic_location" />
+            <TextView
+                android:id="@+id/range_to"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.5"
+                android:gravity="center|center_vertical"
+                android:text="컨텐츠"
+                android:textColor="@color/black"
+                android:textSize="12dp" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/settingTitle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.5"
+                android:gravity="center_vertical"
+                android:text="타이틀"
+                android:textSize="15dp"
+                android:textColor="#5454C5"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/settingContents"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.5"
+                android:gravity="center|center_vertical"
+                android:text="컨텐츠"
+                android:textColor="@color/black"
+                android:textSize="12dp" />
+        </LinearLayout>
+
+    </TableRow>
+
+    <Button
+        android:id="@+id/settingregister"
+        android:layout_width="39dp"
+        android:layout_height="38dp"
+        android:layout_margin="5dp"
+        android:drawableLeft="@drawable/ic_download"
+        android:drawablePadding="12dip"
+        android:gravity="left|center_vertical"
+        android:paddingLeft="10dip"
+        android:text="변경"
+        android:textColor="#6B77E8" />
+</LinearLayout>

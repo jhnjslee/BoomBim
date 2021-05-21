@@ -33,7 +33,7 @@
                     android:layout_marginRight="20dp"
                     android:layout_marginBottom="616dp"
                     android:background="@drawable/border_layout"
-                    android:elevation="1dp"
+                    android:elevation="10dp"
                     android:minHeight="?attr/actionBarSize"
                     android:theme="?attr/actionBarTheme"
                     tools:targetApi="lollipop" />
@@ -58,6 +58,8 @@
                     android:tint="#B758F6E3"
                     app:backgroundTint="#00FFFFFF"
                     app:srcCompat="@android:drawable/ic_menu_mylocation" />
+
+
 
 
         </RelativeLayout>

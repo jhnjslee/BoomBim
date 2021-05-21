@@ -40,7 +40,8 @@
                             android:layout_width="250dp"
                             android:layout_height="40dp"
                             android:background="@android:color/transparent"
-                            android:hint="검색하고자 하는 위치"
+                            android:hint="키워드 검색"
+                            android:inputType="text"
                             android:paddingRight="16dp"
                             android:textColor="#000000"
                             android:textColorHint="#808080" />

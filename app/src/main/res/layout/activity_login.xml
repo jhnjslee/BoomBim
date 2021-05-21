@@ -51,24 +51,24 @@
             android:id="@+id/password"
             android:layout_width="220dp"
             android:layout_height="46dp"
-            android:layout_marginBottom="56dp"
+            android:layout_marginBottom="60dp"
             android:hint="@string/prompt_password"
             android:imeActionLabel="@string/action_sign_in_short"
             android:imeOptions="actionDone"
+            android:importantForAutofill="no"
             android:inputType="textPassword"
             android:selectAllOnFocus="true"
             app:layout_constraintBottom_toTopOf="@+id/login"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:importantForAutofill="no" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <Button
             android:id="@+id/login"
-            android:layout_width="160dp"
-            android:layout_height="48dp"
+            android:layout_width="133dp"
+            android:layout_height="31dp"
             android:layout_gravity="start"
             android:layout_marginBottom="44dp"
-            android:background="#2196F3"
+            android:background="@drawable/border_btn_lightblue"
             android:enabled="false"
             android:text="@string/action_sign_in"
             android:textColor="#FFFFFF"
@@ -78,12 +78,13 @@
 
         <Button
             android:id="@+id/registerButton"
-            android:layout_width="86dp"
-            android:layout_height="31dp"
+            android:layout_width="130dp"
+            android:layout_height="27dp"
             android:layout_marginBottom="92dp"
             android:background="#00FFFFFF"
             android:text="@string/register_btn_string"
             android:textColor="#03A9F4"
+            android:textSize="10sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -91,8 +92,9 @@
         <CheckBox
             android:id="@+id/autoLogin"
             android:layout_width="220dp"
-            android:layout_height="29dp"
+            android:layout_height="25dp"
             android:text="자동 로그인"
+            android:textSize="10sp"
             app:layout_constraintBottom_toTopOf="@+id/login"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

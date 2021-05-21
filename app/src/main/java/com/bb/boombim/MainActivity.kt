@@ -7,22 +7,23 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.view.KeyEvent.KEYCODE_ENTER
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.MenuItemCompat
+import com.bb.boombim.data.ResultSearchKeyword
 import com.bb.boombim.ui.login.LoginActivity
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -34,7 +35,11 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.circlie_menu.*
 import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapView
-
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
     lateinit var locationManager : LocationManager
@@ -43,6 +48,14 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
     var REQUIRED_PERMISSIONS = arrayOf<String>(Manifest.permission.ACCESS_FINE_LOCATION)
     lateinit var mapView : MapView
     lateinit var loadingDialog: LoadingDialog
+    var currentSearchMode : Int = 0 // 0
+    var imm : InputMethodManager? = null
+
+
+    companion object {
+        const val BASE_URL = "https://dapi.kakao.com/"
+        const val API_KEY = "KakaoAK 5370b9816cfb27b331eefc35e6b66bf1"  // REST API 키
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,14 +109,18 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
         mapView = MapView(this)
         val mapViewContainer = findViewById<View>(R.id.map_view) as ViewGroup
         mapViewContainer.addView(mapView)
+        mapView.setCurrentLocationEventListener(this)
 
         val toolbar: Toolbar = findViewById(R.id.mainToolBar)
         this.setSupportActionBar(toolbar)
 
-        locationManager = this.getSystemService(LOCATION_SERVICE) as LocationManager
-        mapView.setCurrentLocationEventListener(this)
+        imm = getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as InputMethodManager
 
+        //location Manager
+        locationManager = this.getSystemService(LOCATION_SERVICE) as LocationManager
         loadingDialog = LoadingDialog(this@MainActivity)
+
+        //Map Mode
         currentMode.text = " 기본 "
         val currentLocationBtn : FloatingActionButton = findViewById(R.id.floatingCurrentLocation)
         currentLocationBtn.setOnClickListener {
@@ -134,10 +151,50 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
         }
 
         floatingBb.setOnClickListener {
-
             loadingDialog.show()
 //            LoadingDialog(this).dismiss()
         }
+
+
+
+        //검색 창 클릭 시
+        searchTitle.setOnTouchListener { v, event ->
+            val intent = Intent(this, SearchActivity::class.java)
+            startActivity(intent)
+            true
+        }
+
+        //검색 창 엔터 enter
+        searchTitle.setOnKeyListener { v, keyCode, event ->
+            if (event.action == KeyEvent.ACTION_DOWN && keyCode == KEYCODE_ENTER) {
+                when (currentSearchMode) {
+                    //키워드 검색
+                    0->{
+                        searchKeyword(searchTitle.text.toString())
+                    }
+                    //주소 검색
+                    1->{
+
+                    }
+                    //
+                    2->{
+
+
+                    }
+                }
+
+
+
+                imm?.hideSoftInputFromWindow(v.windowToken,0)
+                searchTitle.text.clear()
+                Toasty.error(this,"message",Toasty.LENGTH_SHORT).show()   // 엔터 눌렀을때 행동
+             }
+
+            true
+        }
+
+
+
     }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.tool_menu, menu)
@@ -149,24 +206,17 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
             .load("https://images.unsplash.com/photo-1478070531059-3db579c041d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80")
             .into(profileImage)
         profileImage.setOnClickListener {
-            Toast.makeText(
-                this@MainActivity,
-                "Profile Clicked",
-                Toast.LENGTH_SHORT
-            ).show()
+
+            //계정 클릭
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
         }
         return super.onCreateOptionsMenu(menu)
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_one -> Toast.makeText(
-                this@MainActivity,
-                "Menu One Clicked",
-                Toast.LENGTH_SHORT
-            ).show()
-
             R.id.menu_two -> {
-                //로그인
+                //도움말
                 val intent = Intent(this, LoginActivity::class.java)
                 startActivity(intent)
             }
@@ -296,6 +346,35 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
                 }
         }
     }
+
+
+    // 키워드 검색 함수
+    private fun searchKeyword(keyword: String) {
+        val retrofit = Retrofit.Builder()   // Retrofit 구성
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+        val api = retrofit.create(KakaoAPI::class.java)   // 통신 인터페이스를 객체로 생성
+        val call = api.getSearchKeyword(API_KEY, keyword)   // 검색 조건 입력
+
+        // API 서버에 요청
+        call.enqueue(object: Callback<ResultSearchKeyword> {
+            override fun onResponse(
+                call: Call<ResultSearchKeyword>,
+                response: Response<ResultSearchKeyword>
+            ) {
+                // 통신 성공 (검색 결과는 response.body()에 담겨있음)
+                Log.d("Test", "Raw: ${response.raw()}")
+                Log.d("Test", "Body: ${response.body()}")
+            }
+
+            override fun onFailure(call: Call<ResultSearchKeyword>, t: Throwable) {
+                // 통신 실패
+                Log.w("MainActivity", "통신 실패: ${t.message}")
+            }
+        })
+    }
+
 
 
 

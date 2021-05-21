@@ -13,10 +13,16 @@ class SettingActivity : AppCompatActivity() {
         setContentView(R.layout.activity_setting)
 
         setSupportActionBar(toolbar)
-
+        var loginStatus = false
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)  // 왼쪽 버튼 사용 여부 true
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.abc_vector_test)  // 왼쪽 버튼 이미지 설정
         supportActionBar!!.setDisplayShowTitleEnabled(false) // 타이틀 안보이게 하기
+
+        if (!loginStatus){
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.settingFrameTop, LoginYetFragment())
+                .commit()
+        }
 
     }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

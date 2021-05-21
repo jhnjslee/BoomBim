@@ -1,16 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item
-        android:id="@+id/menu_one"
-        android:icon="@drawable/ic_search_black_24dp"
-        android:title="Menu One"
-        app:showAsAction="always" />
+
     <item
         android:id="@+id/menu_two"
         android:icon="@drawable/ic_menu_button_of_three_horizontal_lines"
         android:iconTint="@color/black"
-        android:title="로그인" />
+        android:title="도움말" />
     <item
         android:title="Menu Three"
         android:iconTint="@color/black"
