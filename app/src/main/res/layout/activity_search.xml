@@ -20,16 +20,17 @@
         android:elevation="10dp"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerView"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.488"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.36"
+        app:layout_constraintVertical_bias="0.043"
+        app:titleTextColor="#00FFFFFF"
         tools:targetApi="lollipop">
 
         <EditText
-            android:id="@+id/searchTitle"
+            android:id="@+id/searchTitle_main"
             android:layout_width="250dp"
             android:layout_height="40dp"
             android:background="@android:color/transparent"
@@ -43,13 +44,15 @@
     </androidx.appcompat.widget.Toolbar>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="403dp"
-        android:layout_height="642dp"
+        android:id="@+id/result_recycler"
+        android:layout_width="421dp"
+        android:layout_height="634dp"
         android:background="#FFFFFF"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mainToolBar" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

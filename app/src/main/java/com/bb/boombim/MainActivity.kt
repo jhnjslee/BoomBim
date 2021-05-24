@@ -3,19 +3,16 @@ package com.bb.boombim
 //import android.R
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
-import android.location.Location
-import android.location.LocationListener
-import android.location.LocationManager
+import android.location.*
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.view.*
-import android.view.KeyEvent.KEYCODE_ENTER
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -30,7 +27,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.imangazaliev.circlemenu.CircleMenu
 import de.hdodenhof.circleimageview.CircleImageView
-import es.dmoral.toasty.Toasty
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.circlie_menu.*
 import net.daum.mf.map.api.MapPoint
@@ -40,11 +36,14 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.IOException
+import java.util.*
 
 class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
     lateinit var locationManager : LocationManager
     private val GPS_ENABLE_REQUEST_CODE = 2001
     private val PERMISSIONS_REQUEST_CODE = 100
+    private val RESULT_CODE = 200
     var REQUIRED_PERMISSIONS = arrayOf<String>(Manifest.permission.ACCESS_FINE_LOCATION)
     lateinit var mapView : MapView
     lateinit var loadingDialog: LoadingDialog
@@ -62,7 +61,7 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
         setContentView(R.layout.activity_main)
         init(applicationContext)
         //toolBar
-        Toasty.error(this, "This is an error toast.", Toast.LENGTH_SHORT, true).show();
+//        Toasty.error(this, "This is an error toast.", Toast.LENGTH_SHORT, true).show();
 
         if( !checkLocationServicesStatus()){
             showDialogForLocationServiceSetting()
@@ -104,6 +103,7 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
         curvedBottomNavigationView.menu.getItem(0).setChecked(true)
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun init(applicationContext: Context) {
         //mapView
         mapView = MapView(this)
@@ -140,8 +140,27 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
                     1.0f,  // 통지사이의 최소 변경거리 (m)
                     mLocationListener
                 )
+                var latitude = 0.0
+                var longitude = 0.0
+                var userLocation: Location = getLatLng()
+                if(userLocation != null){
+                    latitude = userLocation.latitude
+                    longitude = userLocation.longitude
+                    Log.d("CheckCurrentLocation", "현재 내 위치 값: ${latitude}, ${longitude}")
 
-
+                    var mGeoCoder =  Geocoder(applicationContext, Locale.KOREAN)
+                    var mResultList: List<Address>? = null
+                    try{
+                        mResultList = mGeoCoder.getFromLocation(
+                                latitude!!, longitude!!, 1
+                        )
+                    }catch(e: IOException){
+                        e.printStackTrace()
+                    }
+                    if(mResultList != null){
+                        Log.d("CheckCurrentLocation", mResultList[0].getAddressLine(0))
+                    }
+                }
 
                 //txtCurrentPositionInfo.setText("위치정보 미수신중");
                 //lm.removeUpdates(mLocationListener);  //  미수신할때는 반드시 자원해체를 해주어야 한다.
@@ -152,47 +171,19 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
 
         floatingBb.setOnClickListener {
             loadingDialog.show()
-//            LoadingDialog(this).dismiss()
         }
 
 
 
         //검색 창 클릭 시
-        searchTitle.setOnTouchListener { v, event ->
-            val intent = Intent(this, SearchActivity::class.java)
-            startActivity(intent)
+        searchTitle_main.setOnTouchListener { v, event ->
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                Log.d("click search","click Search")
+                val intent = Intent(this, SearchActivity::class.java)
+                startActivity(intent)
+            }
             true
         }
-
-        //검색 창 엔터 enter
-        searchTitle.setOnKeyListener { v, keyCode, event ->
-            if (event.action == KeyEvent.ACTION_DOWN && keyCode == KEYCODE_ENTER) {
-                when (currentSearchMode) {
-                    //키워드 검색
-                    0->{
-                        searchKeyword(searchTitle.text.toString())
-                    }
-                    //주소 검색
-                    1->{
-
-                    }
-                    //
-                    2->{
-
-
-                    }
-                }
-
-
-
-                imm?.hideSoftInputFromWindow(v.windowToken,0)
-                searchTitle.text.clear()
-                Toasty.error(this,"message",Toasty.LENGTH_SHORT).show()   // 엔터 눌렀을때 행동
-             }
-
-            true
-        }
-
 
 
     }
@@ -344,37 +335,35 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
                         return
                     }
                 }
+
+
         }
     }
 
 
-    // 키워드 검색 함수
-    private fun searchKeyword(keyword: String) {
-        val retrofit = Retrofit.Builder()   // Retrofit 구성
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-        val api = retrofit.create(KakaoAPI::class.java)   // 통신 인터페이스를 객체로 생성
-        val call = api.getSearchKeyword(API_KEY, keyword)   // 검색 조건 입력
 
-        // API 서버에 요청
-        call.enqueue(object: Callback<ResultSearchKeyword> {
-            override fun onResponse(
-                call: Call<ResultSearchKeyword>,
-                response: Response<ResultSearchKeyword>
-            ) {
-                // 통신 성공 (검색 결과는 response.body()에 담겨있음)
-                Log.d("Test", "Raw: ${response.raw()}")
-                Log.d("Test", "Body: ${response.body()}")
-            }
+    private fun getLatLng(): Location{
+        var currentLatLng: Location? = null
+        var hasFineLocationPermission = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+        var hasCoarseLocationPermission = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION)
 
-            override fun onFailure(call: Call<ResultSearchKeyword>, t: Throwable) {
-                // 통신 실패
-                Log.w("MainActivity", "통신 실패: ${t.message}")
+        if(hasFineLocationPermission == PackageManager.PERMISSION_GRANTED &&
+                hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED){
+            val locatioNProvider = LocationManager.GPS_PROVIDER
+            currentLatLng = locationManager?.getLastKnownLocation(locatioNProvider)
+        }else{
+            if(ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[0])){
+                Toast.makeText(this, "앱을 실행하려면 위치 접근 권한이 필요합니다.", Toast.LENGTH_SHORT).show()
+                ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE)
+            }else{
+                ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE)
             }
-        })
+            currentLatLng = getLatLng()
+        }
+        return currentLatLng!!
     }
-
 
 
 

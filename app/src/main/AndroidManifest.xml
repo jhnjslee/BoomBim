@@ -17,11 +17,12 @@
         android:theme="@style/Theme.AppCompat.NoActionBar"
         android:usesCleartextTraffic="true"
         tools:targetApi="n">
-        <activity android:name=".SearchActivity"
+        <activity
+            android:name=".SearchActivity"
             android:windowSoftInputMode="adjustResize"
-            ></activity>
-        <activity android:name=".SettingActivity"
-            ></activity>
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize"
+        />
+        <activity android:name=".SettingActivity" />
         <activity android:name=".RegisterActivity" />
         <activity
             android:name=".ui.login.LoginActivity"
