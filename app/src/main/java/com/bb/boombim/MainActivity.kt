@@ -29,6 +29,7 @@ import com.imangazaliev.circlemenu.CircleMenu
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.circlie_menu.*
+import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapView
 import retrofit2.Retrofit
@@ -41,9 +42,8 @@ import java.util.*
 
 class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
     lateinit var locationManager : LocationManager
-    private val GPS_ENABLE_REQUEST_CODE = 2001
-    private val PERMISSIONS_REQUEST_CODE = 100
-    private val RESULT_CODE = 200
+
+
     var REQUIRED_PERMISSIONS = arrayOf<String>(Manifest.permission.ACCESS_FINE_LOCATION)
     lateinit var mapView : MapView
     lateinit var loadingDialog: LoadingDialog
@@ -140,6 +140,7 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
                     1.0f,  // 통지사이의 최소 변경거리 (m)
                     mLocationListener
                 )
+
                 var latitude = 0.0
                 var longitude = 0.0
                 var userLocation: Location = getLatLng()
@@ -180,7 +181,9 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 Log.d("click search","click Search")
                 val intent = Intent(this, SearchActivity::class.java)
-                startActivity(intent)
+                startActivityForResult(intent,R.string.NORMAL_RESULT)
+
+//                startForResult.launch(Intent(this, SearchActivity::class.java))
             }
             true
         }
@@ -286,14 +289,14 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
                 // 3-3. 사용자게에 퍼미션 요청을 합니다. 요청 결과는 onRequestPermissionResult에서 수신됩니다.
                 ActivityCompat.requestPermissions(
                     this@MainActivity, REQUIRED_PERMISSIONS,
-                    PERMISSIONS_REQUEST_CODE
+                    R.string.PERMISSIONS_REQUEST_CODE
                 )
             } else {
                 // 4-1. 사용자가 퍼미션 거부를 한 적이 없는 경우에는 퍼미션 요청을 바로 합니다.
                 // 요청 결과는 onRequestPermissionResult에서 수신됩니다.
                 ActivityCompat.requestPermissions(
                     this@MainActivity, REQUIRED_PERMISSIONS,
-                    PERMISSIONS_REQUEST_CODE
+                        R.string.PERMISSIONS_REQUEST_CODE
                 )
             }
         }
@@ -312,7 +315,7 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
         builder.setCancelable(true)
         builder.setPositiveButton("설정", DialogInterface.OnClickListener { dialog, id ->
             val callGPSSettingIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-            startActivityForResult(callGPSSettingIntent, GPS_ENABLE_REQUEST_CODE)
+            startActivityForResult(callGPSSettingIntent,  R.string.PERMISSIONS_REQUEST_CODE)
         })
         builder.setNegativeButton("취소",
             DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
@@ -323,10 +326,9 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        Log.d("currentResult", "0")
         Log.d("requestCode", requestCode.toString())
         when (requestCode) {
-            GPS_ENABLE_REQUEST_CODE ->
+            R.string.PERMISSIONS_REQUEST_CODE ->
                 //사용자가 GPS 활성 시켰는지 검사
                 if (checkLocationServicesStatus()) {
                     if (checkLocationServicesStatus()) {
@@ -335,6 +337,19 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
                         return
                     }
                 }
+            R.string.RESULT_SEARCH_CODE ->{
+                // 지도에 마커 추가
+                Log.d("marker","marker")
+                val point = MapPOIItem()
+                point.apply {
+//                    itemName = data.get
+//                    mapPoint = MapPoint.mapPointWithGeoCoord(item.y.toDouble(),
+//                            item.x.toDouble())
+//                    markerType = MapPOIItem.MarkerType.BluePin
+//                    selectedMarkerType = MapPOIItem.MarkerType.RedPin
+                }
+                mapView.addPOIItem(point)
+            }
 
 
         }
@@ -352,13 +367,18 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
         if(hasFineLocationPermission == PackageManager.PERMISSION_GRANTED &&
                 hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED){
             val locatioNProvider = LocationManager.GPS_PROVIDER
-            currentLatLng = locationManager?.getLastKnownLocation(locatioNProvider)
-        }else{
+            currentLatLng = locationManager.getLastKnownLocation(locatioNProvider)
+            if ( currentLatLng == null){
+                val locatioNProvider = LocationManager.NETWORK_PROVIDER
+                currentLatLng = locationManager.getLastKnownLocation(locatioNProvider)
+            }
+        }
+        else{
             if(ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[0])){
                 Toast.makeText(this, "앱을 실행하려면 위치 접근 권한이 필요합니다.", Toast.LENGTH_SHORT).show()
-                ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE)
+                ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, R.string.PERMISSIONS_REQUEST_CODE)
             }else{
-                ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE)
+                ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, R.string.PERMISSIONS_REQUEST_CODE)
             }
             currentLatLng = getLatLng()
         }

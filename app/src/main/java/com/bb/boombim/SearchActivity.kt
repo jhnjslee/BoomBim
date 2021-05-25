@@ -1,5 +1,6 @@
 package com.bb.boombim
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
@@ -13,6 +14,8 @@ import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.MenuItemCompat
@@ -26,6 +29,7 @@ import es.dmoral.toasty.Toasty
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.searchTitle_main
 import kotlinx.android.synthetic.main.activity_search.*
+import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
 import retrofit2.Call
 import retrofit2.Callback
@@ -58,7 +62,14 @@ class SearchActivity : AppCompatActivity() {
         Log.d("onCreate","SearchActivity")
         init(applicationContext)
         initRecycler()
-
+        val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                result: ActivityResult ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val intent = result.data
+                // Handle the Intent
+                //do stuff here
+            }
+        }
     }
     private fun initRecycler() {
         // 리사이클러 뷰
@@ -168,15 +179,13 @@ class SearchActivity : AppCompatActivity() {
                     response: Response<ResultSearchKeyword>
             ) {
 
-                Toasty.success(this@SearchActivity, "검색 성공", Toasty.LENGTH_SHORT).show()   // 엔터 눌렀을때 행동
-
                 addItems(response.body())
             }
 
             override fun onFailure(call: Call<ResultSearchKeyword>, t: Throwable) {
                 // 통신 실패
                 Toasty.error(this@SearchActivity, "검색 실패", Toast.LENGTH_SHORT).show()
-                Log.w("SearchActivity", "통신 실패: ${t.message}")
+
             }
         })
     }
@@ -215,7 +224,7 @@ class SearchActivity : AppCompatActivity() {
 
         } else {
             // 검색 결과 없음
-            Toast.makeText(this, "검색 결과가 없습니다", Toast.LENGTH_SHORT).show()
+            Toasty.error(this, "검색 결과가 없습니다", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -243,10 +252,15 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    fun clickLocation(){
-        Log.d("test", "clickLocation")
-
+    fun clickLocation(item : ListLayout) {
+        val intent : Intent  = Intent()
+        intent.setFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP)
+        val array = arrayOf(item.name, item.address, item.road, item.x, item.y)
+        intent.putExtra("data", array)
+        setResult(R.string.RESULT_SEARCH_CODE,intent)
         finish()
+
+
     }
 
 
