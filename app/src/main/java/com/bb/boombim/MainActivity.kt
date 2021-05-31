@@ -15,12 +15,13 @@ import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.MenuItemCompat
-import com.bb.boombim.data.ResultSearchKeyword
 import com.bb.boombim.ui.login.LoginActivity
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -32,12 +33,8 @@ import kotlinx.android.synthetic.main.circlie_menu.*
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapView
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.io.IOException
+import java.io.Serializable
 import java.util.*
 
 class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
@@ -129,16 +126,16 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
 //                LoadingDialog(this).show()
                 // GPS 제공자의 정보가 바뀌면 콜백하도록 리스너 등록하기~!!!
                 locationManager.requestLocationUpdates(
-                    LocationManager.GPS_PROVIDER,  // 등록할 위치제공자
-                    100,  // 통지사이의 최소 시간간격 (miliSecond)
-                    1.0f,  // 통지사이의 최소 변경거리 (m)
-                    mLocationListener
+                        LocationManager.GPS_PROVIDER,  // 등록할 위치제공자
+                        100,  // 통지사이의 최소 시간간격 (miliSecond)
+                        1.0f,  // 통지사이의 최소 변경거리 (m)
+                        mLocationListener
                 )
                 locationManager.requestLocationUpdates(
-                    LocationManager.NETWORK_PROVIDER,  // 등록할 위치제공자
-                    100,  // 통지사이의 최소 시간간격 (miliSecond)
-                    1.0f,  // 통지사이의 최소 변경거리 (m)
-                    mLocationListener
+                        LocationManager.NETWORK_PROVIDER,  // 등록할 위치제공자
+                        100,  // 통지사이의 최소 시간간격 (miliSecond)
+                        1.0f,  // 통지사이의 최소 변경거리 (m)
+                        mLocationListener
                 )
 
                 var latitude = 0.0
@@ -155,7 +152,7 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
                         mResultList = mGeoCoder.getFromLocation(
                                 latitude!!, longitude!!, 1
                         )
-                    }catch(e: IOException){
+                    }catch (e: IOException){
                         e.printStackTrace()
                     }
                     if(mResultList != null){
@@ -179,9 +176,10 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
         //검색 창 클릭 시
         searchTitle_main.setOnTouchListener { v, event ->
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                Log.d("click search","click Search")
+                Log.d("click search", "click Search")
                 val intent = Intent(this, SearchActivity::class.java)
-                startActivityForResult(intent,R.string.NORMAL_RESULT)
+//                startActivityForResult(intent, R.string.NORMAL_RESULT)
+                requestActivity.launch(intent)
 
 //                startForResult.launch(Intent(this, SearchActivity::class.java))
             }
@@ -215,9 +213,9 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
                 startActivity(intent)
             }
             R.id.menu_three -> Toast.makeText(
-                this@MainActivity,
-                "Menu Three Clicked",
-                Toast.LENGTH_SHORT
+                    this@MainActivity,
+                    "Menu Three Clicked",
+                    Toast.LENGTH_SHORT
             ).show()
         }
         return super.onOptionsItemSelected(item)
@@ -262,8 +260,8 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
         //런타임 퍼미션 처리
         // 1. 위치 퍼미션을 가지고 있는지 체크합니다.
         val hasFineLocationPermission = ContextCompat.checkSelfPermission(
-            this@MainActivity,
-            Manifest.permission.ACCESS_FINE_LOCATION
+                this@MainActivity,
+                Manifest.permission.ACCESS_FINE_LOCATION
         )
         if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED) {
 
@@ -278,9 +276,9 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
 
             // 3-1. 사용자가 퍼미션 거부를 한 적이 있는 경우에는
             if (ActivityCompat.shouldShowRequestPermissionRationale(
-                    this@MainActivity,
-                    REQUIRED_PERMISSIONS.get(0)
-                )
+                            this@MainActivity,
+                            REQUIRED_PERMISSIONS.get(0)
+                    )
             ) {
 
                 // 3-2. 요청을 진행하기 전에 사용자가에게 퍼미션이 필요한 이유를 설명해줄 필요가 있습니다.
@@ -288,14 +286,14 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
                     .show()
                 // 3-3. 사용자게에 퍼미션 요청을 합니다. 요청 결과는 onRequestPermissionResult에서 수신됩니다.
                 ActivityCompat.requestPermissions(
-                    this@MainActivity, REQUIRED_PERMISSIONS,
-                    R.string.PERMISSIONS_REQUEST_CODE
+                        this@MainActivity, REQUIRED_PERMISSIONS,
+                        R.string.PERMISSIONS_REQUEST_CODE
                 )
             } else {
                 // 4-1. 사용자가 퍼미션 거부를 한 적이 없는 경우에는 퍼미션 요청을 바로 합니다.
                 // 요청 결과는 onRequestPermissionResult에서 수신됩니다.
                 ActivityCompat.requestPermissions(
-                    this@MainActivity, REQUIRED_PERMISSIONS,
+                        this@MainActivity, REQUIRED_PERMISSIONS,
                         R.string.PERMISSIONS_REQUEST_CODE
                 )
             }
@@ -307,7 +305,7 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
         val builder: android.app.AlertDialog.Builder = android.app.AlertDialog.Builder(this@MainActivity)
         builder.setTitle("위치 서비스 비활성화")
         builder.setMessage(
-            """
+                """
             앱을 사용하기 위해서는 위치 서비스가 필요합니다.
             위치 설정을 수정하실래요?
             """.trimIndent()
@@ -315,10 +313,12 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
         builder.setCancelable(true)
         builder.setPositiveButton("설정", DialogInterface.OnClickListener { dialog, id ->
             val callGPSSettingIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-            startActivityForResult(callGPSSettingIntent,  R.string.PERMISSIONS_REQUEST_CODE)
+//            startActivityForResult(callGPSSettingIntent, R.string.PERMISSIONS_REQUEST_CODE)
+            requestActivity.launch(callGPSSettingIntent)
+
         })
         builder.setNegativeButton("취소",
-            DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
+                DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
         builder.create().show()
     }
 
@@ -326,7 +326,7 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        Log.d("requestCode", requestCode.toString())
+        Log.d("requestCode", requestCode.toString() + " " + data + " " + resultCode)
         when (requestCode) {
             R.string.PERMISSIONS_REQUEST_CODE ->
                 //사용자가 GPS 활성 시켰는지 검사
@@ -337,9 +337,9 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
                         return
                     }
                 }
-            R.string.RESULT_SEARCH_CODE ->{
+            R.string.RESULT_SEARCH_CODE -> {
                 // 지도에 마커 추가
-                Log.d("marker","marker")
+                Log.d("marker", "marker")
                 val point = MapPOIItem()
                 point.apply {
 //                    itemName = data.get
@@ -350,50 +350,74 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
                 }
                 mapView.addPOIItem(point)
             }
-
-
         }
     }
 
+        private fun getLatLng(): Location{
+            var currentLatLng: Location? = null
+            var hasFineLocationPermission = ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)
+            var hasCoarseLocationPermission = ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION)
 
-
-    private fun getLatLng(): Location{
-        var currentLatLng: Location? = null
-        var hasFineLocationPermission = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-        var hasCoarseLocationPermission = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_COARSE_LOCATION)
-
-        if(hasFineLocationPermission == PackageManager.PERMISSION_GRANTED &&
-                hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED){
-            val locatioNProvider = LocationManager.GPS_PROVIDER
-            currentLatLng = locationManager.getLastKnownLocation(locatioNProvider)
-            if ( currentLatLng == null){
-                val locatioNProvider = LocationManager.NETWORK_PROVIDER
+            if(hasFineLocationPermission == PackageManager.PERMISSION_GRANTED &&
+                    hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED){
+                val locatioNProvider = LocationManager.GPS_PROVIDER
                 currentLatLng = locationManager.getLastKnownLocation(locatioNProvider)
+                if ( currentLatLng == null){
+                    val locatioNProvider = LocationManager.NETWORK_PROVIDER
+                    currentLatLng = locationManager.getLastKnownLocation(locatioNProvider)
+                }
             }
-        }
-        else{
-            if(ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[0])){
-                Toast.makeText(this, "앱을 실행하려면 위치 접근 권한이 필요합니다.", Toast.LENGTH_SHORT).show()
-                ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, R.string.PERMISSIONS_REQUEST_CODE)
-            }else{
-                ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, R.string.PERMISSIONS_REQUEST_CODE)
+            else{
+                if(ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[0])){
+                    Toast.makeText(this, "앱을 실행하려면 위치 접근 권한이 필요합니다.", Toast.LENGTH_SHORT).show()
+                    ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, R.string.PERMISSIONS_REQUEST_CODE)
+                }else{
+                    ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, R.string.PERMISSIONS_REQUEST_CODE)
+                }
+                currentLatLng = getLatLng()
             }
-            currentLatLng = getLatLng()
+            return currentLatLng!!
         }
-        return currentLatLng!!
+
+        private var mResultCode = 0
+
+
+
+
+
+        private val requestActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
+                StartActivityForResult() // ◀ StartActivityForResult 처리를 담당
+        ) { activityResult ->
+            // action to do something
+            Log.d("123", activityResult.resultCode.toString())
+            when (activityResult.resultCode.toString()){
+                "200" -> {
+                    val list: ArrayList<String>? = intent.getSerializableExtra("data") as ArrayList<String>?
+
+                    if (list != null) {
+                        Log.d("c", "ccc")
+                    }else{
+                        Log.d("c", "cccc")
+
+                    }
+
+
+                    if (list != null) {
+                        Log.d("d", list.size.toString())
+                    }
+                }
+
+            }
+
+        }
+
+
+        override fun onDestroy() {
+            super.onDestroy()
+        }
+
     }
 
 
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-    }
-
-
-
-
-
-}

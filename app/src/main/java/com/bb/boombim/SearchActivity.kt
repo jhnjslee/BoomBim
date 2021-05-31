@@ -6,6 +6,8 @@ import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.os.Handler
+import android.os.Parcel
+import android.os.Parcelable
 import android.util.AttributeSet
 import android.util.Log
 import android.view.KeyEvent
@@ -16,6 +18,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.Nullable
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.MenuItemCompat
@@ -29,15 +32,15 @@ import es.dmoral.toasty.Toasty
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.searchTitle_main
 import kotlinx.android.synthetic.main.activity_search.*
-import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.Serializable
 
-class SearchActivity : AppCompatActivity() {
+class SearchActivity() : AppCompatActivity(), Parcelable, Serializable{
 
     val RESULT_SEARCH_CODE = 200
 
@@ -47,23 +50,47 @@ class SearchActivity : AppCompatActivity() {
     var datas : ResultSearchKeyword? = null
 
     private val listItems = arrayListOf<ListLayout>()   // 리사이클러 뷰 아이템
-    private val listAdapter = SearchListAdapter(listItems,this)    // 리사이클러 뷰 어댑터
+    private val listAdapter = SearchListAdapter(listItems, this)    // 리사이클러 뷰 어댑터
     private var pageNumber = 1      // 검색 페이지 번호
     private var keyword = ""
 
-    companion object {
+    private var mResultCode = 0
+    private var mData: Intent? = null
+
+    constructor(parcel: Parcel) : this() {
+        Log.d(" ", parcel.toString())
+        currentSearchMode = parcel.readInt()
+        doubleBackToExitPressedOnce = parcel.readByte() != 0.toByte()
+        this@SearchActivity.mResultCode = parcel.readInt()
+        this@SearchActivity.mData = parcel.readParcelable(Intent::class.java.classLoader)
+        pageNumber = parcel.readInt()
+        keyword = parcel.readString().toString()
+    }
+
+    companion object CREATOR : Parcelable.Creator<SearchActivity> {
+        override fun createFromParcel(parcel: Parcel): SearchActivity {
+            return SearchActivity(parcel)
+        }
+
+        override fun newArray(size: Int): Array<SearchActivity> {
+            TODO("Not yet implemented")
+        }
         const val BASE_URL = "https://dapi.kakao.com/"
         const val API_KEY = "KakaoAK 5370b9816cfb27b331eefc35e6b66bf1"  // REST API 키
+
     }
+
+
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
-        Log.d("onCreate","SearchActivity")
+        Log.d("onCreate", "SearchActivity")
         init(applicationContext)
         initRecycler()
-        val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-                result: ActivityResult ->
+        val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val intent = result.data
                 // Handle the Intent
@@ -82,7 +109,7 @@ class SearchActivity : AppCompatActivity() {
         result_recycler.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         result_recycler.adapter = listAdapter
         // 리스트 아이템 클릭 시 해당 위치로 이동
-        listAdapter.setItemClickListener(object: SearchListAdapter.OnItemClickListener {
+        listAdapter.setItemClickListener(object : SearchListAdapter.OnItemClickListener {
             override fun onClick(v: View, position: Int) {
                 val mapPoint = MapPoint.mapPointWithGeoCoord(listItems[position].y, listItems[position].x)
 //                mapView.setMapCenterPointAndZoomLevel(mapPoint, 1, true)
@@ -205,22 +232,9 @@ class SearchActivity : AppCompatActivity() {
                         document.x.toDouble(),
                         document.y.toDouble())
                 listItems.add(item)
-
-                // 지도에 마커 추가
-//                val point = MapPOIItem()
-//                point.apply {
-//                    itemName = document.place_name
-//                    mapPoint = MapPoint.mapPointWithGeoCoord(document.y.toDouble(),
-//                            document.x.toDouble())
-//                    markerType = MapPOIItem.MarkerType.BluePin
-//                    selectedMarkerType = MapPOIItem.MarkerType.RedPin
-//                }
-//                mapView.addPOIItem(point)
             }
             listAdapter.notifyDataSetChanged()
 
-//            btnNextPage.isEnabled = !searchResult.meta.is_end // 페이지가 더 있을 경우 다음 버튼 활성화
-//            btnPrevPage.isEnabled = pageNumber != 1             // 1페이지가 아닐 경우 이전 버튼 활성화
 
         } else {
             // 검색 결과 없음
@@ -247,17 +261,18 @@ class SearchActivity : AppCompatActivity() {
 
         Log.d("requestCode", requestCode.toString())
         when (requestCode) {
-            RESULT_SEARCH_CODE->{
+            RESULT_SEARCH_CODE -> {
             }
         }
     }
 
-    fun clickLocation(item : ListLayout) {
+    fun clickLocation(item: ListLayout) {
         val intent : Intent  = Intent()
-        intent.setFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP)
+        intent.flags = Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP
         val array = arrayOf(item.name, item.address, item.road, item.x, item.y)
         intent.putExtra("data", array)
-        setResult(R.string.RESULT_SEARCH_CODE,intent)
+
+        setResult(200, intent)
         finish()
 
 
@@ -274,6 +289,20 @@ class SearchActivity : AppCompatActivity() {
             outRect.bottom = verticalSpaceHeight
         }
     }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeInt(currentSearchMode)
+        parcel.writeByte(if (doubleBackToExitPressedOnce) 1 else 0)
+        parcel.writeInt(mResultCode)
+        parcel.writeParcelable(mData, flags)
+        parcel.writeInt(pageNumber)
+        parcel.writeString(keyword)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
 
 }
 
