@@ -22,10 +22,14 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.MenuItemCompat
+import com.bb.boombim.data.LocationSearch
 import com.bb.boombim.ui.login.LoginActivity
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.imangazaliev.circlemenu.CircleMenu
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_main.*
@@ -51,6 +55,8 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
     companion object {
         const val BASE_URL = "https://dapi.kakao.com/"
         const val API_KEY = "KakaoAK 5370b9816cfb27b331eefc35e6b66bf1"  // REST API 키
+        val db = Firebase.firestore
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -186,7 +192,8 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
             true
         }
 
-
+        val fdb : FirebaseFirestore = FirebaseFirestore.getInstance()
+        fdb.collection("user")
     }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.tool_menu, menu)
@@ -271,7 +278,7 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
 
             // 3.  위치 값을 가져올 수 있음
 //            mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOnWithHeading
-            mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading
+//            mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading
         } else {  //2. 퍼미션 요청을 허용한 적이 없다면 퍼미션 요청이 필요합니다. 2가지 경우(3-1, 4-1)가 있습니다.
 
             // 3-1. 사용자가 퍼미션 거부를 한 적이 있는 경우에는
@@ -323,36 +330,6 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
     }
 
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        Log.d("requestCode", requestCode.toString() + " " + data + " " + resultCode)
-        when (requestCode) {
-            R.string.PERMISSIONS_REQUEST_CODE ->
-                //사용자가 GPS 활성 시켰는지 검사
-                if (checkLocationServicesStatus()) {
-                    if (checkLocationServicesStatus()) {
-                        Log.d("@@@", "onActivityResult : GPS 활성화 되있음")
-                        checkRunTimePermission()
-                        return
-                    }
-                }
-            R.string.RESULT_SEARCH_CODE -> {
-                // 지도에 마커 추가
-                Log.d("marker", "marker")
-                val point = MapPOIItem()
-                point.apply {
-//                    itemName = data.get
-//                    mapPoint = MapPoint.mapPointWithGeoCoord(item.y.toDouble(),
-//                            item.x.toDouble())
-//                    markerType = MapPOIItem.MarkerType.BluePin
-//                    selectedMarkerType = MapPOIItem.MarkerType.RedPin
-                }
-                mapView.addPOIItem(point)
-            }
-        }
-    }
-
         private fun getLatLng(): Location{
             var currentLatLng: Location? = null
             var hasFineLocationPermission = ContextCompat.checkSelfPermission(this,
@@ -391,24 +368,38 @@ class MainActivity : AppCompatActivity(), MapView.CurrentLocationEventListener {
                 StartActivityForResult() // ◀ StartActivityForResult 처리를 담당
         ) { activityResult ->
             // action to do something
-            Log.d("123", activityResult.resultCode.toString())
-            when (activityResult.resultCode.toString()){
-                "200" -> {
-                    val list: ArrayList<String>? = intent.getSerializableExtra("data") as ArrayList<String>?
 
-                    if (list != null) {
-                        Log.d("c", "ccc")
-                    }else{
-                        Log.d("c", "cccc")
-
+            Log.d("code", activityResult.resultCode.toString())
+            when (activityResult.resultCode){
+                R.string.PERMISSIONS_REQUEST_CODE -> {
+                    //사용자가 GPS 활성 시켰는지 검사
+                    if (checkLocationServicesStatus()) {
+                        if (checkLocationServicesStatus()) {
+                            Log.d("@@@", "onActivityResult : GPS 활성화 되있음")
+                            checkRunTimePermission()
+                        }
                     }
+                }
+                RESULT_OK -> {
+                    val lcList = activityResult.data?.getParcelableArrayListExtra<LocationSearch>("data")
+                    Log.d("lcList",lcList?.size.toString())
+                    if (lcList != null) {
+                        val point = MapPOIItem()
+                            point.apply {
+                            itemName = lcList[0].name
+                            mapPoint = MapPoint.mapPointWithGeoCoord(lcList[0].y, lcList[0].x)
+                            markerType = MapPOIItem.MarkerType.BluePin
+                            selectedMarkerType = MapPOIItem.MarkerType.RedPin
+                            }
+                            mapView.addPOIItem(point)
+                            mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(lcList[0].y, lcList[0].x), true);
 
+                    }else{
 
-                    if (list != null) {
-                        Log.d("d", list.size.toString())
                     }
                 }
 
+                //
             }
 
         }

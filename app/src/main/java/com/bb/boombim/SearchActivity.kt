@@ -18,7 +18,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.Nullable
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.MenuItemCompat
@@ -26,6 +25,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bb.boombim.data.ListLayout
+import com.bb.boombim.data.LocationSearch
 import com.bb.boombim.data.ResultSearchKeyword
 import com.bb.boombim.ui.login.LoginActivity
 import es.dmoral.toasty.Toasty
@@ -268,11 +268,13 @@ class SearchActivity() : AppCompatActivity(), Parcelable, Serializable{
 
     fun clickLocation(item: ListLayout) {
         val intent : Intent  = Intent()
-        intent.flags = Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP
-        val array = arrayOf(item.name, item.address, item.road, item.x, item.y)
-        intent.putExtra("data", array)
-
-        setResult(200, intent)
+//        intent.flags = Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP
+//        val array = arrayOf(item.name, item.address, item.road, item.x, item.y)
+        val lc = LocationSearch(item.name,item.address,item.road,item.x,item.y)
+        val lcl : ArrayList<LocationSearch> = arrayListOf(lc)
+        Log.d("item",item.address +" " + item.address)
+        intent.putParcelableArrayListExtra("data",lcl)
+        setResult(RESULT_OK, intent)
         finish()
 
 
