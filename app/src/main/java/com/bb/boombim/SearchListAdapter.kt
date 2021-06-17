@@ -39,9 +39,9 @@ class SearchListAdapter(val itemList: ArrayList<ListLayout>, mActivity: SearchAc
 
 
             if (itemList[position].distance == ""){
-                holder.range.text = "?"
+//                holder.range.text = "?"
             }else{
-                holder.range.text = itemList[position].road
+//                holder.range.text = itemList[position].road
             }
             // 아이템 클릭 이벤트
 
@@ -59,7 +59,6 @@ class SearchListAdapter(val itemList: ArrayList<ListLayout>, mActivity: SearchAc
         class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
             val name: TextView = itemView.findViewById(R.id.search_name)
             val road: TextView = itemView.findViewById(R.id.search_road_name)
-            val range: TextView = itemView.findViewById(R.id.range_to)
         }
 
         interface OnItemClickListener {

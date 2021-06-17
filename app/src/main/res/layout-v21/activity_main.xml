@@ -33,6 +33,7 @@
                     android:elevation="1dp"
                     android:focusable="true"
                     android:tint="#0037FF"
+                    android:visibility="gone"
                     app:backgroundTint="#00FFFFFF"
                     app:fabSize="normal"
                     app:rippleColor="#00FFFFFF"
@@ -98,6 +99,7 @@
                     android:layout_marginTop="616dp"
                     android:layout_marginEnd="17dp"
                     android:clickable="true"
+                    app:rippleColor="#6CADDF"
                     app:srcCompat="@drawable/avd_cross_to_plus" />
 
         </RelativeLayout>
@@ -116,7 +118,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="true"
-            app:backgroundTint="#03A9F4"
+            app:backgroundTint="#6CADDF"
             app:layout_constraintBottom_toTopOf="@+id/curvedBottomNavigationView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

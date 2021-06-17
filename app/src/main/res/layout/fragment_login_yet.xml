@@ -8,9 +8,10 @@
     tools:context=".LoginYetFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/nouserlayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/border_darkgrey">
+        android:background="@drawable/border_btn_lightblue">
 
         <Button
             android:id="@+id/emptyProfile"

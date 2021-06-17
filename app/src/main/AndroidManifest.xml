@@ -17,17 +17,24 @@
         android:theme="@style/Theme.AppCompat.NoActionBar"
         android:usesCleartextTraffic="true"
         tools:targetApi="n">
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-1437428724660416~1843262530"/>
+
+        <activity android:name=".popup.LikePopup"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.DayNight.Dialog.Alert" >
+        </activity>
         <activity
             android:name=".SearchActivity"
-            android:windowSoftInputMode="adjustResize"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize"
-        />
+            android:windowSoftInputMode="adjustNothing" />
         <activity android:name=".SettingActivity" />
         <activity android:name=".RegisterActivity" />
         <activity
             android:name=".ui.login.LoginActivity"
             android:label="@string/title_activity_login"
-            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
+            android:theme="@style/LoginTheme" />
         <activity
             android:name=".SplashView"
             android:screenOrientation="portrait"

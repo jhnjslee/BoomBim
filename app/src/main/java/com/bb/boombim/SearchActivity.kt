@@ -8,6 +8,8 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Parcel
 import android.os.Parcelable
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.AttributeSet
 import android.util.Log
 import android.view.KeyEvent
@@ -80,9 +82,14 @@ class SearchActivity() : AppCompatActivity(), Parcelable, Serializable{
 
     }
 
-
-
-
+    val watcher: TextWatcher = object : TextWatcher {
+        override fun afterTextChanged(s: Editable) {}
+        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+//            result[5] = s.toString()
+            searchKeyword(s.toString())
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -106,6 +113,7 @@ class SearchActivity() : AppCompatActivity(), Parcelable, Serializable{
         val spaceDecoration = VerticalSpaceItemDecoration(10)
         result_recycler.addItemDecoration(spaceDecoration)
         result_recycler.addItemDecoration(dividerItemDecoration)
+
         result_recycler.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         result_recycler.adapter = listAdapter
         // 리스트 아이템 클릭 시 해당 위치로 이동
@@ -123,6 +131,7 @@ class SearchActivity() : AppCompatActivity(), Parcelable, Serializable{
         imm = getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as InputMethodManager
 
         //검색 창 엔터 enter
+        searchTitle_main.addTextChangedListener(watcher)
         searchTitle_main.setOnKeyListener { v, keyCode, event ->
 
             if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
@@ -238,7 +247,7 @@ class SearchActivity() : AppCompatActivity(), Parcelable, Serializable{
 
         } else {
             // 검색 결과 없음
-            Toasty.error(this, "검색 결과가 없습니다", Toast.LENGTH_SHORT).show()
+//            Toasty.error(this, "검색 결과가 없습니다", Toast.LENGTH_SHORT).show()
         }
     }
 

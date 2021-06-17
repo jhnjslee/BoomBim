@@ -4,9 +4,9 @@
     <item
         android:id="@+id/page1"
         android:checkable="false"
-        android:icon="@drawable/ic_location"
+        android:icon="@drawable/ic_map"
         android:iconTint="@color/white"
-        android:title=""
+        android:title="지도"
         app:showAsAction="always" />
     <item
         android:id="@+id/page"
@@ -21,6 +21,6 @@
         android:checkable="false"
         android:iconTint="@color/white"
         android:icon="@drawable/ic_menu_three_dots"
-        android:title=""
+        android:title="더보기"
         app:showAsAction="always" />
 </menu>

@@ -19,8 +19,8 @@ class SearchRecyclerAdapter(private val myData: ResultSearchKeyword) :
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             val searchName: TextView = view.findViewById(R.id.search_name)
             val roadName : TextView = view.findViewById(R.id.search_road_name)
-            val rangeTo : TextView = view.findViewById(R.id.range_to)
-            val etcBtn : Button = view.findViewById(R.id.search_etc_btn)
+//            val rangeTo : TextView = view.findViewById(R.id.range_to)
+//            val etcBtn : Button = view.findViewById(R.id.search_etc_btn)
 
             init {
                 // Define click listener for the ViewHolder's View.

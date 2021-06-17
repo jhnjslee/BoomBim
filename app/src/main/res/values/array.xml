@@ -7,7 +7,7 @@
     </array>
     <array name="circle_menu_icon">
         <item>@drawable/ic_star</item>
-        <item>@drawable/ic_download</item>
+        <item>@android:drawable/ic_menu_mylocation</item>
         <item>@drawable/ic_heart</item>
     </array>
 
